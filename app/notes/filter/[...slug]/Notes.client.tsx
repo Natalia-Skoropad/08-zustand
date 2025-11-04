@@ -1,0 +1,67 @@
+'use client';
+
+import { useState } from 'react';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
+
+import { fetchNotes } from '@/lib/api';
+import type { NoteTag } from '@/types/note';
+import useDebouncedSearch from '@/hooks/useDebouncedSearch';
+
+import { SearchBox, Pagination, NoteList } from '@/app/components';
+import Link from 'next/link';
+
+import css from './NotesPage.module.css';
+
+//===========================================================================
+
+const PER_PAGE = 12;
+
+function NotesClient({ tag }: { tag?: NoteTag }) {
+  const [page, setPage] = useState(1);
+
+  const {
+    input: searchInput,
+    query: searchRaw,
+    onChange: handleSearch,
+  } = useDebouncedSearch({ delay: 800, onDebounced: () => setPage(1) });
+
+  const search = searchRaw.trim().length >= 2 ? searchRaw.trim() : '';
+
+  const { data, isLoading, isFetching, isError, error } = useQuery({
+    queryKey: ['notes', page, PER_PAGE, search, tag ?? ''],
+    queryFn: () => fetchNotes({ page, perPage: PER_PAGE, search, tag }),
+    placeholderData: keepPreviousData,
+  });
+
+  const notes = data?.items ?? [];
+  const totalPages = data?.totalPages ?? 0;
+  const errMsg = error instanceof Error ? error.message : undefined;
+
+  return (
+    <section className={css.app}>
+      <header className={css.toolbar} aria-label="Notes toolbar">
+        <SearchBox value={searchInput} onChange={handleSearch} maxLength={50} />
+
+        {totalPages > 1 && (
+          <Pagination
+            pageCount={totalPages}
+            currentPage={page}
+            onPageChange={setPage}
+          />
+        )}
+
+        <Link className={css.button} href="/notes/action/create">
+          Create note +
+        </Link>
+      </header>
+
+      {(isLoading || isFetching) && (
+        <p className={css.isLoading}>Loading notes…</p>
+      )}
+      {isError && <p className={css.isError}>Error: {errMsg}</p>}
+      {notes.length > 0 && <NoteList notes={notes} />}
+    </section>
+  );
+}
+
+export default NotesClient;
