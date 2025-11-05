@@ -27,6 +27,7 @@ function SearchBox({ value, onChange, maxLength = 50 }: SearchBoxProps) {
       <label htmlFor={inputId} className="visually-hidden">
         Search
       </label>
+
       <input
         id={inputId}
         className={css.input}

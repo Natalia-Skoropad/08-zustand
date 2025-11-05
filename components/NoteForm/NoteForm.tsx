@@ -15,12 +15,13 @@ import css from './NoteForm.module.css';
 //===========================================================================
 
 const TAGS: NoteTag[] = ['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'];
+type FieldErrors = Partial<Record<keyof CreateNoteInput, string>>;
 
 interface NoteFormProps {
   tags: NoteTag[];
 }
 
-type FieldErrors = Partial<Record<keyof CreateNoteInput, string>>;
+//===========================================================================
 
 const schema = Yup.object({
   title: Yup.string()
@@ -28,10 +29,12 @@ const schema = Yup.object({
     .min(3, 'Title too short')
     .max(50, 'Title too long')
     .required('Title is required'),
+
   content: Yup.string()
     .trim()
     .max(500, 'Content too long')
     .required('Content is required'),
+
   tag: Yup.mixed<NoteTag>().oneOf(TAGS, 'Invalid tag').required('Select tag'),
 });
 
@@ -39,6 +42,8 @@ const schema = Yup.object({
 
 function NoteForm({ tags }: NoteFormProps) {
   const router = useRouter();
+  const fieldId = useId();
+
   const { draft, setDraft, clearDraft } = useNoteDraftStore();
   const [errors, setErrors] = useState<FieldErrors>({});
 
@@ -49,8 +54,6 @@ function NoteForm({ tags }: NoteFormProps) {
       router.back();
     },
   });
-
-  const fieldId = useId();
 
   const validateField = async (
     name: keyof CreateNoteInput,
@@ -159,6 +162,7 @@ function NoteForm({ tags }: NoteFormProps) {
           text={isPending ? 'Creating…' : 'Create'}
           disabled={isPending || !isFormValid}
         />
+
         <Button type="button" variant="cancel" onClick={cancel} text="Cancel" />
       </div>
     </form>

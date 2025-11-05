@@ -7,7 +7,7 @@ import 'modern-normalize/modern-normalize.css';
 
 //===========================================================================
 
-const SITE_URL = 'https://08-zustand.vercel.app';
+const SITE_URL = 'https://08-zustand-chi-mauve.vercel.app';
 
 const roboto = Roboto({
   subsets: ['latin'],

@@ -13,7 +13,7 @@ import type { Metadata } from 'next';
 //===========================================================================
 
 const PER_PAGE = 12;
-const SITE_URL = 'https://08-zustand.vercel.app';
+const SITE_URL = 'https://08-zustand-chi-mauve.vercel.app';
 
 interface NotesByTagPageProps {
   params: Promise<{ slug?: string[] }>;
@@ -42,6 +42,7 @@ export async function generateMetadata({
   return {
     title,
     description,
+
     openGraph: {
       title,
       description,

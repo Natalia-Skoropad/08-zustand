@@ -4,7 +4,6 @@ import type { Note, NoteTag } from '@/types/note';
 // ================================================================
 
 const BASE_URL = 'https://notehub-public.goit.study/api';
-
 const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN as string | undefined;
 
 if (!token) {

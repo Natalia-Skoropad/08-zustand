@@ -7,7 +7,7 @@ import { fetchNotes } from '@/lib/api';
 import type { NoteTag } from '@/types/note';
 import useDebouncedSearch from '@/hooks/useDebouncedSearch';
 
-import { SearchBox, Pagination, NoteList } from '@/app/components';
+import { SearchBox, Pagination, NoteList, EmptyState } from '@/app/components';
 import Link from 'next/link';
 
 import css from './NotesPage.module.css';
@@ -37,6 +37,8 @@ function NotesClient({ tag }: { tag?: NoteTag }) {
   const totalPages = data?.totalPages ?? 0;
   const errMsg = error instanceof Error ? error.message : undefined;
 
+  const showEmpty = !isLoading && !isFetching && !isError && notes.length === 0;
+
   return (
     <section className={css.app}>
       <header className={css.toolbar} aria-label="Notes toolbar">
@@ -58,7 +60,22 @@ function NotesClient({ tag }: { tag?: NoteTag }) {
       {(isLoading || isFetching) && (
         <p className={css.isLoading}>Loading notes…</p>
       )}
+
       {isError && <p className={css.isError}>Error: {errMsg}</p>}
+
+      {showEmpty && (
+        <EmptyState
+          title="Nothing found"
+          message={
+            search
+              ? `No results for '${search}'. Try a different keyword.`
+              : tag
+              ? `No notes with tag '${tag}' yet.`
+              : 'No notes yet.'
+          }
+        />
+      )}
+
       {notes.length > 0 && <NoteList notes={notes} />}
     </section>
   );

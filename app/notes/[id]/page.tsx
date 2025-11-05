@@ -11,7 +11,7 @@ import type { Metadata } from 'next';
 
 // ================================================================
 
-const SITE_URL = 'https://08-zustand.vercel.app';
+const SITE_URL = 'https://08-zustand-chi-mauve.vercel.app';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -33,6 +33,7 @@ export async function generateMetadata({
     return {
       title,
       description,
+
       openGraph: {
         title,
         description,
@@ -64,6 +65,7 @@ export async function generateMetadata({
     return {
       title,
       description,
+
       openGraph: {
         title,
         description,

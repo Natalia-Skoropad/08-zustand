@@ -7,7 +7,7 @@ import css from './CreateNote.module.css';
 //===========================================================================
 
 const TAGS: NoteTag[] = ['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'];
-const SITE_URL = 'https://08-zustand.vercel.app';
+const SITE_URL = 'https://08-zustand-chi-mauve.vercel.app';
 
 //===========================================================================
 
