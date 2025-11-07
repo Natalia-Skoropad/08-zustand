@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 
 import type { Note } from '@/types/note';
 import { deleteNote } from '@/lib/api';
@@ -24,7 +25,17 @@ function NoteList({ notes }: NoteListProps) {
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (noteId: string) => deleteNote(noteId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notes'] }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      toast.success('Note deleted');
+    },
+
+    onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : 'Failed to delete note';
+      toast.error(msg);
+    },
+
     onSettled: () => setPendingId(null),
   });
 
@@ -32,9 +43,7 @@ function NoteList({ notes }: NoteListProps) {
     try {
       setPendingId(id);
       await mutateAsync(id);
-    } catch (err) {
-      console.error('Failed to delete note', err);
-    }
+    } catch {}
   };
 
   if (notes.length === 0) return null;

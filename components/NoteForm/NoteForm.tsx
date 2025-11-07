@@ -1,9 +1,10 @@
 'use client';
 
 import { useId, useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import * as Yup from 'yup';
+import { toast } from 'react-hot-toast';
 
 import { createNote, type CreateNoteInput } from '@/lib/api';
 import type { NoteTag } from '@/types/note';
@@ -29,12 +30,10 @@ const schema = Yup.object({
     .min(3, 'Title too short')
     .max(50, 'Title too long')
     .required('Title is required'),
-
   content: Yup.string()
     .trim()
     .max(500, 'Content too long')
     .required('Content is required'),
-
   tag: Yup.mixed<NoteTag>().oneOf(TAGS, 'Invalid tag').required('Select tag'),
 });
 
@@ -43,15 +42,24 @@ const schema = Yup.object({
 function NoteForm({ tags }: NoteFormProps) {
   const router = useRouter();
   const fieldId = useId();
+  const queryClient = useQueryClient();
 
   const { draft, setDraft, clearDraft } = useNoteDraftStore();
   const [errors, setErrors] = useState<FieldErrors>({});
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (data: CreateNoteInput) => createNote(data),
+
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
       clearDraft();
+      toast.success('Note created successfully');
       router.back();
+    },
+
+    onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : 'Failed to create note';
+      toast.error(msg);
     },
   });
 

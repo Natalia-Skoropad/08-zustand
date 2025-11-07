@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
 
 //===============================================================
 
@@ -17,6 +18,7 @@ function TanStackProvider({ children }: TanStackProviderProps) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
+      <Toaster position="top-right" />
     </QueryClientProvider>
   );
 }
